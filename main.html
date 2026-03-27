@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INK'D — Hand Painted Tees</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Caveat:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cream: #F5EFE0;
+    --warm-white: #FAF6EE;
+    --ink-black: #1A1208;
+    --burnt-sienna: #C0522A;
+    --ochre: #D4922A;
+    --sage: #6B7F5E;
+    --dusty-rose: #C48B80;
+    --deep-brown: #3D2B1F;
+    --paint-blue: #4A6FA5;
+    --paint-red: #B94040;
+    --paint-green: #4A7A5A;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink-black);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--burnt-sienna);
+    position: fixed; pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: multiply;
+  }
+  .cursor-trail {
+    width: 40px; height: 40px;
+    border: 2px solid var(--burnt-sienna);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.35s ease, opacity 0.3s;
+    opacity: 0.4;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 3rem;
+    background: rgba(245, 239, 224, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(192, 82, 42, 0.12);
+  }
+  .nav-logo {
+    font-family: 'Caveat', cursive;
+    font-size: 2rem; font-weight: 700;
+    color: var(--burnt-sienna);
+    letter-spacing: 1px;
+  }
+  .nav-logo span { color: var(--ink-black); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 500;
+    text-decoration: none; color: var(--deep-brown);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    position: relative; padding-bottom: 2px;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 1.5px; background: var(--burnt-sienna);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    background: var(--burnt-sienna); color: white !important;
+    padding: 0.6rem 1.4rem; border-radius: 2px;
+    font-size: 0.8rem !important;
+  }
+  .nav-cta::after { display: none !important; }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center; position: relative;
+    padding-top: 80px; overflow: hidden;
+  }
+
+  .hero-bg-circle {
+    position: absolute; right: -10%; top: 50%;
+    transform: translateY(-50%);
+    width: 55vw; height: 55vw;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #E8D5B0 0%, #D4B896 60%, #C4A07A 100%);
+    z-index: 0; opacity: 0.5;
+  }
+
+  .hero-left {
+    padding: 4rem 3rem 4rem 5rem;
+    position: relative; z-index: 2;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--burnt-sienna);
+    margin-bottom: 1.5rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-tag::before {
+    content: ''; display: block;
+    width: 28px; height: 1.5px; background: var(--burnt-sienna);
+  }
+
+  .hero-h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5.5vw, 5.5rem);
+    line-height: 1.05; font-weight: 900;
+    color: var(--ink-black);
+    opacity: 0; transform: translateY(30px);
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero-h1 em {
+    font-style: italic; color: var(--burnt-sienna);
+    display: block;
+  }
+
+  .hero-brush {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    color: var(--ochre); font-weight: 600;
+    display: block; margin-top: -0.2rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem; line-height: 1.7;
+    color: #5C4033; max-width: 420px;
+    margin-top: 1.5rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .hero-actions {
+    display: flex; align-items: center; gap: 1.5rem;
+    margin-top: 2.5rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.9s 1s forwards;
+  }
+  .btn-primary {
+    background: var(--burnt-sienna); color: white;
+    padding: 1rem 2.2rem; border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 500;
+    letter-spacing: 0.05em; cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-101%);
+    transition: transform 0.35s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); }
+
+  .btn-secondary {
+    font-size: 0.9rem; color: var(--deep-brown);
+    text-decoration: none; display: flex; align-items: center; gap: 0.4rem;
+    border-bottom: 1px solid currentColor; padding-bottom: 2px;
+  }
+
+  /* ─── HERO RIGHT ─── */
+  .hero-right {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    padding: 4rem 3rem;
+  }
+
+  .tshirt-showcase {
+    position: relative;
+    opacity: 0; transform: scale(0.92);
+    animation: popIn 1s 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  .tshirt-svg {
+    width: 320px; height: auto;
+    filter: drop-shadow(0 30px 60px rgba(61, 43, 31, 0.2));
+  }
+
+  .floating-names {
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+
+  .float-tag {
+    position: absolute;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    background: white;
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    white-space: nowrap;
+    animation: floatBob 3s ease-in-out infinite;
+  }
+  .float-tag:nth-child(1) { top: 5%; left: -15%; font-size: 1.1rem; color: var(--paint-red); animation-delay: 0s; }
+  .float-tag:nth-child(2) { top: 20%; right: -20%; font-size: 0.95rem; color: var(--paint-blue); animation-delay: 0.5s; }
+  .float-tag:nth-child(3) { bottom: 25%; left: -18%; font-size: 1rem; color: var(--paint-green); animation-delay: 1s; }
+  .float-tag:nth-child(4) { bottom: 10%; right: -12%; font-size: 0.9rem; color: var(--ochre); animation-delay: 1.5s; }
+
+  /* ─── SCROLL INDICATOR ─── */
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--deep-brown); opacity: 0.5;
+    animation: fadeIn 1s 1.5s forwards, scrollBounce 2s 2s ease-in-out infinite;
+    opacity: 0;
+  }
+  .scroll-hint::after {
+    content: ''; display: block;
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--deep-brown), transparent);
+  }
+
+  /* ─── HOW IT WORKS ─── */
+  #how {
+    padding: 8rem 5rem;
+    background: var(--warm-white);
+    position: relative;
+  }
+  #how::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--burnt-sienna), transparent);
+  }
+
+  .section-eyebrow {
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem; color: var(--burnt-sienna);
+    margin-bottom: 0.5rem; opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .section-eyebrow.visible { opacity: 1; transform: translateY(0); }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 900; line-height: 1.1;
+    color: var(--ink-black); max-width: 500px;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s 0.1s, transform 0.7s 0.1s;
+  }
+  .section-title.visible { opacity: 1; transform: translateY(0); }
+
+  .steps {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 3rem; margin-top: 4rem;
+  }
+
+  .step {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .step.visible { opacity: 1; transform: translateY(0); }
+  .step:nth-child(2) { transition-delay: 0.15s; }
+  .step:nth-child(3) { transition-delay: 0.3s; }
+
+  .step-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem; font-weight: 900;
+    color: rgba(192, 82, 42, 0.12);
+    line-height: 1; margin-bottom: 1rem;
+  }
+
+  .step-icon {
+    width: 56px; height: 56px;
+    background: var(--cream);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 1.2rem;
+    border: 2px solid rgba(192, 82, 42, 0.2);
+  }
+
+  .step h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .step p { font-size: 0.95rem; line-height: 1.7; color: #5C4033; }
+
+  .step-connector {
+    grid-column: span 3; display: flex; align-items: center;
+    gap: 0; margin-top: -1.5rem;
+  }
+
+  /* ─── MEMORY STRIP ─── */
+  #memories {
+    padding: 6rem 0;
+    background: var(--ink-black);
+    overflow: hidden; position: relative;
+  }
+
+  .memories-header {
+    text-align: center; padding: 0 5rem; margin-bottom: 4rem;
+  }
+  .memories-header .section-eyebrow { color: var(--ochre); }
+  .memories-header .section-title { color: var(--cream); margin: 0 auto; }
+
+  /* Horizontal scroll strip */
+  .photo-strip {
+    display: flex; gap: 1.5rem;
+    padding: 1rem 3rem;
+    will-change: transform;
+  }
+
+  .photo-card {
+    flex-shrink: 0;
+    width: 260px; height: 320px;
+    border-radius: 4px;
+    overflow: hidden; position: relative;
+    background: var(--deep-brown);
+    transition: transform 0.4s ease;
+  }
+  .photo-card:hover { transform: scale(1.04) rotate(-1deg); }
+
+  .photo-card-inner {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  /* Illustrated scene cards */
+  .scene {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    padding: 1.5rem; text-align: center;
+  }
+  .scene-illustration {
+    font-size: 5rem; margin-bottom: 1rem;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+    flex: 1; display: flex; align-items: center; justify-content: center;
+  }
+  .scene-name {
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem; font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .scene-sub {
+    font-size: 0.75rem; color: rgba(255,255,255,0.6);
+    margin-top: 0.2rem; letter-spacing: 0.05em;
+  }
+
+  .card-bg-1 { background: linear-gradient(160deg, #2D5986 0%, #1A3552 100%); }
+  .card-bg-2 { background: linear-gradient(160deg, #7A4A2A 0%, #4A2A12 100%); }
+  .card-bg-3 { background: linear-gradient(160deg, #3A6B4A 0%, #1E3B2A 100%); }
+  .card-bg-4 { background: linear-gradient(160deg, #8B3A3A 0%, #4A1A1A 100%); }
+  .card-bg-5 { background: linear-gradient(160deg, #6B5A2A 0%, #3A3010 100%); }
+  .card-bg-6 { background: linear-gradient(160deg, #3A4A6B 0%, #1A2240 100%); }
+
+  /* The painted name on tshirt label */
+  .tshirt-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+    padding: 0.8rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* ─── NAME PREVIEW ─── */
+  #preview {
+    padding: 8rem 5rem;
+    background: var(--cream);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6rem; align-items: center;
+  }
+
+  .preview-left { }
+  .preview-form {
+    margin-top: 2.5rem;
+    display: flex; flex-direction: column; gap: 1.2rem;
+  }
+
+  .field-group {
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .field-group label {
+    font-size: 0.75rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--deep-brown);
+    font-weight: 500;
+  }
+  .field-group input, .field-group select {
+    background: white;
+    border: 1.5px solid rgba(61, 43, 31, 0.2);
+    padding: 0.9rem 1.1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; color: var(--ink-black);
+    outline: none; transition: border-color 0.2s;
+    cursor: none;
+  }
+  .field-group input:focus, .field-group select:focus {
+    border-color: var(--burnt-sienna);
+  }
+  .field-group input::placeholder { color: #B0A090; }
+
+  .color-row {
+    display: flex; gap: 0.6rem; flex-wrap: wrap;
+  }
+  .color-swatch {
+    width: 32px; height: 32px; border-radius: 50%;
+    cursor: none; border: 2px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .color-swatch:hover { transform: scale(1.2); }
+  .color-swatch.active { border-color: var(--ink-black); }
+  .color-swatch input { display: none; }
+
+  .preview-right {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  /* Live tshirt preview */
+  .live-tshirt-wrap {
+    position: relative; text-align: center;
+  }
+
+  .live-tshirt-svg {
+    width: 280px; height: auto;
+    transition: filter 0.3s;
+  }
+
+  .live-name-overlay {
+    position: absolute;
+    top: 42%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Caveat', cursive;
+    font-size: 2.2rem; font-weight: 700;
+    pointer-events: none;
+    transition: color 0.3s, font-size 0.2s;
+    white-space: nowrap;
+    text-shadow: 1px 2px 4px rgba(0,0,0,0.15);
+    letter-spacing: 0.02em;
+  }
+
+  .brush-strokes {
+    position: absolute; top: 38%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px; opacity: 0.08;
+    pointer-events: none;
+  }
+
+  /* ─── WHY HAND PAINTED ─── */
+  #why {
+    background: var(--deep-brown);
+    padding: 8rem 5rem;
+    position: relative; overflow: hidden;
+  }
+  #why::before {
+    content: 'HAND\APAINTED';
+    white-space: pre;
+    position: absolute; right: -2rem; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 12rem; font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    line-height: 0.85;
+    pointer-events: none;
+  }
+
+  .why-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+  }
+
+  .why-left .section-eyebrow { color: var(--ochre); }
+  .why-left .section-title { color: var(--cream); max-width: 400px; }
+
+  .why-desc {
+    font-size: 1.05rem; line-height: 1.8;
+    color: rgba(245, 239, 224, 0.65);
+    margin-top: 1.5rem; max-width: 440px;
+  }
+
+  .why-right {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .why-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 1.8rem;
+    transition: background 0.3s, transform 0.3s;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s, transform 0.6s, background 0.3s;
+  }
+  .why-card.visible { opacity: 1; transform: translateY(0); }
+  .why-card:nth-child(2) { transition-delay: 0.1s; }
+  .why-card:nth-child(3) { transition-delay: 0.2s; }
+  .why-card:nth-child(4) { transition-delay: 0.3s; }
+  .why-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-4px); }
+
+  .why-icon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+  .why-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; color: var(--cream);
+    margin-bottom: 0.4rem;
+  }
+  .why-card p { font-size: 0.85rem; color: rgba(245,239,224,0.5); line-height: 1.6; }
+
+  /* ─── CTA ─── */
+  #cta {
+    padding: 10rem 5rem;
+    text-align: center;
+    background: var(--warm-white);
+    position: relative;
+  }
+
+  .cta-paint-splash {
+    position: absolute; top: -2px; left: 0; right: 0;
+    height: 60px; overflow: hidden;
+  }
+
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    font-weight: 900; line-height: 1.05;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+  .cta-title.visible { opacity: 1; transform: translateY(0); }
+  .cta-title em { font-style: italic; color: var(--burnt-sienna); }
+
+  .cta-sub {
+    font-size: 1.1rem; color: #5C4033; margin: 1.5rem auto 3rem;
+    max-width: 480px; line-height: 1.7;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s 0.15s, transform 0.7s 0.15s;
+  }
+  .cta-sub.visible { opacity: 1; transform: translateY(0); }
+
+  .cta-btn-wrap {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s 0.3s, transform 0.7s 0.3s;
+  }
+  .cta-btn-wrap.visible { opacity: 1; transform: translateY(0); }
+
+  .btn-big {
+    display: inline-block;
+    background: var(--burnt-sienna); color: white;
+    padding: 1.2rem 3.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border: none; cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s;
+    box-shadow: 0 8px 40px rgba(192, 82, 42, 0.3);
+  }
+  .btn-big:hover { transform: translateY(-3px); }
+  .btn-big span {
+    font-family: 'Caveat', cursive;
+    font-size: 1.4rem; margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--ink-black); color: var(--cream);
+    padding: 3rem 5rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--burnt-sienna);
+  }
+  footer p { font-size: 0.8rem; color: rgba(245,239,224,0.4); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 0.5; }
+  }
+  @keyframes floatBob {
+    0%, 100% { transform: translateY(0px) rotate(-1deg); }
+    50% { transform: translateY(-8px) rotate(1deg); }
+  }
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+  @keyframes stripScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .auto-strip {
+    display: flex;
+    animation: stripScroll 30s linear infinite;
+    width: max-content;
+  }
+  .auto-strip:hover { animation-play-state: paused; }
+
+  /* ─── BRUSH DIVIDER ─── */
+  .brush-divider {
+    text-align: center; padding: 1.5rem 0;
+    font-family: 'Caveat', cursive;
+    font-size: 1rem; color: var(--burnt-sienna);
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+  }
+
+  /* Parallax paint blobs */
+  .blob {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">INK<span>'D</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#memories">Gallery</a></li>
+    <li><a href="#preview">Preview</a></li>
+    <li><a href="#cta" class="nav-cta">Order Now</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-bg-circle"></div>
+
+  <div class="hero-left">
+    <div class="hero-tag">100% Hand Painted • Made with love</div>
+    <h1 class="hero-h1">
+      Wear your
+      <em>name,</em>
+      <span class="hero-brush">carry the memory.</span>
+    </h1>
+    <p class="hero-sub">
+      Custom hand-painted t-shirts for your family trips, reunions & adventures. 
+      Every brushstroke is personal — because machines can't paint love.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('preview').scrollIntoView({behavior:'smooth'})">
+        Preview Your Name
+      </button>
+      <a href="#how" class="btn-secondary">See how it works ↓</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="tshirt-showcase">
+      <!-- T-Shirt SVG -->
+      <svg class="tshirt-svg" viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 20 C100 20 85 15 60 30 L10 75 L45 95 L55 80 L55 290 L245 290 L245 80 L255 95 L290 75 L240 30 C215 15 200 20 200 20 C200 20 190 50 150 50 C110 50 100 20 100 20Z"
+              fill="#F0E6D0" stroke="#D4C4A8" stroke-width="2"/>
+        <!-- collar shadow -->
+        <path d="M100 22 C110 48 140 52 150 52 C160 52 190 48 200 22" stroke="#C4B498" stroke-width="1.5" fill="none"/>
+        <!-- sleeve shadow -->
+        <path d="M55 80 L45 95" stroke="#C4B498" stroke-width="2"/>
+        <path d="M245 80 L255 95" stroke="#C4B498" stroke-width="2"/>
+        <!-- fabric fold lines -->
+        <path d="M120 100 Q130 200 125 280" stroke="#E0D0BC" stroke-width="1" fill="none" opacity="0.6"/>
+        <path d="M180 100 Q170 200 175 280" stroke="#E0D0BC" stroke-width="1" fill="none" opacity="0.6"/>
+      </svg>
+
+      <!-- Hand-painted name -->
+      <div style="position:absolute; top:42%; left:50%; transform:translate(-50%,-50%); font-family:'Caveat',cursive; font-size:2.4rem; font-weight:700; color:#C0522A; white-space:nowrap; text-shadow:1px 2px 0 rgba(192,82,42,0.2); letter-spacing:0.04em;">
+        Sharma Family
+      </div>
+
+      <!-- Paint texture brushmarks on shirt -->
+      <svg style="position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:200px;opacity:0.06;" viewBox="0 0 200 40">
+        <ellipse cx="100" cy="20" rx="95" ry="12" fill="#C0522A"/>
+      </svg>
+
+      <div class="floating-names">
+        <div class="float-tag">✦ Aarav</div>
+        <div class="float-tag">Priya ✦</div>
+        <div class="float-tag">✦ Rohan</div>
+        <div class="float-tag">Meera ✦</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">scroll</div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how">
+  <div class="section-eyebrow reveal">Three simple steps</div>
+  <h2 class="section-title reveal">From your name to your memory</h2>
+
+  <div class="steps">
+    <div class="step reveal-step">
+      <div class="step-number">01</div>
+      <div class="step-icon">✍️</div>
+      <h3>Tell us the names</h3>
+      <p>Share the names you want painted — your family, your squad, or just you. Pick a font style and color that speaks to you.</p>
+    </div>
+    <div class="step reveal-step">
+      <div class="step-number">02</div>
+      <div class="step-icon">🎨</div>
+      <h3>We paint by hand</h3>
+      <p>Our artists pick up a brush — not a machine. Every letter, every stroke is done with care. No two shirts are ever exactly alike.</p>
+    </div>
+    <div class="step reveal-step">
+      <div class="step-number">03</div>
+      <div class="step-icon">📸</div>
+      <h3>Wear it, capture it</h3>
+      <p>Pack your shirts, head to your trip, and take that photo. The kind that becomes a framed memory twenty years from now.</p>
+    </div>
+  </div>
+</section>
+
+<div class="brush-divider">— — ✦ — —</div>
+
+<!-- ─── MEMORIES GALLERY ─── -->
+<section id="memories">
+  <div class="memories-header">
+    <div class="section-eyebrow reveal" style="color:var(--ochre);">Real families. Real trips.</div>
+    <h2 class="section-title reveal" style="color:var(--cream); margin:0 auto;">The moments that matter</h2>
+  </div>
+
+  <div style="overflow:hidden; position:relative;">
+    <div class="auto-strip" id="strip">
+      <!-- Cards × 2 for seamless loop -->
+      <div class="photo-card card-bg-1" style="margin-left:2rem;">
+        <div class="scene">
+          <div class="scene-illustration">🏔️</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#7EB8F7;">Gupta Family</div>
+            <div class="scene-sub">Manali Trip '24</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-2">
+        <div class="scene">
+          <div class="scene-illustration">🏖️</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#F7C07E;">Team Wanderers</div>
+            <div class="scene-sub">Goa Reunion</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-3">
+        <div class="scene">
+          <div class="scene-illustration">🌿</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#7EF7A0;">The Mehtas</div>
+            <div class="scene-sub">Coorg Getaway</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-4">
+        <div class="scene">
+          <div class="scene-illustration">🕌</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#F77E7E;">Nair Clan</div>
+            <div class="scene-sub">Rajasthan Roads</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-5">
+        <div class="scene">
+          <div class="scene-illustration">🌊</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#F7E87E;">Iyer Squad</div>
+            <div class="scene-sub">Kerala Backwaters</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-6">
+        <div class="scene">
+          <div class="scene-illustration">🏰</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#BE7EF7;">The Kapoors</div>
+            <div class="scene-sub">Mysore Palace</div>
+          </div>
+        </div>
+      </div>
+      <!-- Duplicate for loop -->
+      <div class="photo-card card-bg-1">
+        <div class="scene">
+          <div class="scene-illustration">🏔️</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#7EB8F7;">Gupta Family</div>
+            <div class="scene-sub">Manali Trip '24</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-2">
+        <div class="scene">
+          <div class="scene-illustration">🏖️</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#F7C07E;">Team Wanderers</div>
+            <div class="scene-sub">Goa Reunion</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-3">
+        <div class="scene">
+          <div class="scene-illustration">🌿</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#7EF7A0;">The Mehtas</div>
+            <div class="scene-sub">Coorg Getaway</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-4">
+        <div class="scene">
+          <div class="scene-illustration">🕌</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#F77E7E;">Nair Clan</div>
+            <div class="scene-sub">Rajasthan Roads</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-5">
+        <div class="scene">
+          <div class="scene-illustration">🌊</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#F7E87E;">Iyer Squad</div>
+            <div class="scene-sub">Kerala Backwaters</div>
+          </div>
+        </div>
+      </div>
+      <div class="photo-card card-bg-6">
+        <div class="scene">
+          <div class="scene-illustration">🏰</div>
+          <div class="tshirt-label">
+            <div class="scene-name" style="color:#BE7EF7;">The Kapoors</div>
+            <div class="scene-sub">Mysore Palace</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center; color:rgba(245,239,224,0.35); font-size:0.8rem; margin-top:2rem; letter-spacing:0.1em;">
+    YOUR FAMILY COULD BE NEXT ✦
+  </p>
+</section>
+
+<!-- ─── LIVE PREVIEW ─── -->
+<section id="preview">
+  <div class="preview-left">
+    <div class="section-eyebrow reveal">Try it now</div>
+    <h2 class="section-title reveal">See your name on a shirt</h2>
+
+    <div class="preview-form">
+      <div class="field-group">
+        <label>Your name or family name</label>
+        <input type="text" id="nameInput" placeholder="e.g. Sharma Family" maxlength="22"
+               oninput="updatePreview()">
+      </div>
+
+      <div class="field-group">
+        <label>Paint color</label>
+        <div class="color-row" id="colorRow">
+          <label class="color-swatch active" style="background:#C0522A;" title="Burnt Sienna">
+            <input type="radio" name="color" value="#C0522A" checked onchange="updateColor(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#4A6FA5;" title="Ocean Blue">
+            <input type="radio" name="color" value="#4A6FA5" onchange="updateColor(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#4A7A5A;" title="Forest Green">
+            <input type="radio" name="color" value="#4A7A5A" onchange="updateColor(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#B94040;" title="Deep Red">
+            <input type="radio" name="color" value="#B94040" onchange="updateColor(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#6B3F8F;" title="Royal Purple">
+            <input type="radio" name="color" value="#6B3F8F" onchange="updateColor(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#1A1208;" title="Ink Black">
+            <input type="radio" name="color" value="#1A1208" onchange="updateColor(this.value)">
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Shirt color</label>
+        <div class="color-row" id="shirtColorRow">
+          <label class="color-swatch active" style="background:#F0E6D0; border:1.5px solid #C4B498;" title="Natural">
+            <input type="radio" name="shirt" value="#F0E6D0" checked onchange="updateShirt(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#FFFFFF; border:1.5px solid #ddd;" title="White">
+            <input type="radio" name="shirt" value="#FFFFFF" onchange="updateShirt(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#2C3E50;" title="Navy">
+            <input type="radio" name="shirt" value="#2C3E50" onchange="updateShirt(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#3D5A3E;" title="Olive">
+            <input type="radio" name="shirt" value="#3D5A3E" onchange="updateShirt(this.value)">
+          </label>
+          <label class="color-swatch" style="background:#7A1A1A;" title="Maroon">
+            <input type="radio" name="shirt" value="#7A1A1A" onchange="updateShirt(this.value)">
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%; text-align:center; padding:1.1rem; margin-top:0.5rem; font-size:0.95rem;"
+              onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">
+        Love it — Place Order ✦
+      </button>
+    </div>
+  </div>
+
+  <div class="preview-right">
+    <div class="live-tshirt-wrap">
+      <!-- Subtle painted brushmark behind shirt -->
+      <svg class="brush-strokes" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="30" rx="90" ry="20" fill="var(--burnt-sienna)"/>
+      </svg>
+
+      <svg class="live-tshirt-svg" id="liveShirt" viewBox="0 0 300 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="shirtBody" d="M100 20 C100 20 85 15 60 30 L10 75 L45 95 L55 80 L55 290 L245 290 L245 80 L255 95 L290 75 L240 30 C215 15 200 20 200 20 C200 20 190 50 150 50 C110 50 100 20 100 20Z"
+              fill="#F0E6D0" stroke="#D4C4A8" stroke-width="2"/>
+        <path d="M100 22 C110 48 140 52 150 52 C160 52 190 48 200 22" stroke="#C4B498" stroke-width="1.5" fill="none"/>
+        <path d="M120 100 Q130 200 125 280" stroke="rgba(0,0,0,0.06)" stroke-width="2" fill="none"/>
+        <path d="M180 100 Q170 200 175 280" stroke="rgba(0,0,0,0.06)" stroke-width="2" fill="none"/>
+      </svg>
+
+      <div class="live-name-overlay" id="liveNameText" style="color:#C0522A;">
+        Your Name
+      </div>
+
+      <div style="text-align:center; margin-top:1rem; font-family:'Caveat',cursive; font-size:1rem; color:var(--deep-brown); opacity:0.5;">
+        ↑ live preview
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHY HAND PAINTED ─── -->
+<section id="why">
+  <div class="why-grid">
+    <div class="why-left">
+      <div class="section-eyebrow reveal" style="color:var(--ochre);">Why not a machine?</div>
+      <h2 class="section-title reveal" style="color:var(--cream);">Imperfectly perfect — that's the point</h2>
+      <p class="why-desc">
+        A printer makes a product. A painter makes a piece. When you look at the photo years from now, you won't see ink on fabric — you'll see the trip, the laughter, the people. That's what hand-painting gives you.
+      </p>
+    </div>
+
+    <div class="why-right">
+      <div class="why-card reveal-step">
+        <div class="why-icon">🖌️</div>
+        <h4>Every stroke is unique</h4>
+        <p>No two shirts come out exactly the same — just like no two memories do.</p>
+      </div>
+      <div class="why-card reveal-step">
+        <div class="why-icon">💛</div>
+        <h4>Made with intention</h4>
+        <p>Someone sat down, thought of your name, and painted it. That's not nothing.</p>
+      </div>
+      <div class="why-card reveal-step">
+        <div class="why-icon">📸</div>
+        <h4>Photographs beautifully</h4>
+        <p>The texture, the slight variations — they make photos look like art, not merch.</p>
+      </div>
+      <div class="why-card reveal-step">
+        <div class="why-icon">🧺</div>
+        <h4>Built to last</h4>
+        <p>Fabric-safe paint that stays vivid wash after wash. Memory preserved.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section id="cta">
+  <h2 class="cta-title reveal">
+    Your family's next<br><em>trip deserves a shirt.</em>
+  </h2>
+  <p class="cta-sub reveal">
+    Tell us your names. We'll take care of the rest — hand-painted, shipped to your door before your adventure begins.
+  </p>
+  <div class="cta-btn-wrap reveal">
+    <button class="btn-big">
+      Start Your Order <span>✦</span>
+    </button>
+    <p style="margin-top:1.5rem; font-size:0.82rem; color:#9A8070; letter-spacing:0.05em;">
+      Orders dispatched within 5–7 working days
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">INK'D</div>
+  <p>© 2025 INK'D · Hand painted with ♥</p>
+  <p style="font-size:0.75rem; color:rgba(245,239,224,0.25);">Every shirt, every memory</p>
+</footer>
+
+<script>
+  // ─── CURSOR ───
+  const cursor = document.getElementById('cursor');
+  const trail = document.getElementById('cursorTrail');
+  let mx = 0, my = 0, tx = 0, ty = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  });
+
+  function animTrail() {
+    tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12;
+    trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
+    requestAnimationFrame(animTrail);
+  }
+  animTrail();
+
+  document.querySelectorAll('button, a, .color-swatch, .photo-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '28px'; cursor.style.height = '28px';
+      cursor.style.background = 'var(--ochre)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '18px'; cursor.style.height = '18px';
+      cursor.style.background = 'var(--burnt-sienna)';
+    });
+  });
+
+  // ─── SCROLL REVEAL ───
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal, .reveal-step, .why-card').forEach(el => {
+    observer.observe(el);
+  });
+
+  // ─── LIVE PREVIEW ───
+  function updatePreview() {
+    const val = document.getElementById('nameInput').value.trim();
+    const display = document.getElementById('liveNameText');
+    display.textContent = val || 'Your Name';
+    // Scale font if long
+    const len = (val || 'Your Name').length;
+    display.style.fontSize = len > 15 ? '1.4rem' : len > 10 ? '1.9rem' : '2.2rem';
+  }
+
+  function updateColor(val) {
+    document.getElementById('liveNameText').style.color = val;
+    document.querySelectorAll('#colorRow .color-swatch').forEach(s => s.classList.remove('active'));
+    event.target.closest('.color-swatch').classList.add('active');
+  }
+
+  function updateShirt(val) {
+    document.getElementById('shirtBody').setAttribute('fill', val);
+    // Update stroke for dark shirts
+    const isDark = parseInt(val.slice(1,3),16) < 100;
+    document.getElementById('shirtBody').setAttribute('stroke', isDark ? 'rgba(255,255,255,0.15)' : '#D4C4A8');
+    document.querySelectorAll('#shirtColorRow .color-swatch').forEach(s => s.classList.remove('active'));
+    event.target.closest('.color-swatch').classList.add('active');
+  }
+
+  // ─── PARALLAX HERO BG ───
+  document.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const circle = document.querySelector('.hero-bg-circle');
+    if (circle) circle.style.transform = `translateY(calc(-50% + ${y*0.2}px))`;
+  });
+</script>
+</body>
+</html>
