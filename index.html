@@ -651,6 +651,193 @@
     filter: blur(80px); pointer-events: none; z-index: 0;
   }
 
+  /* ─── HAMBURGER MENU ─── */
+  .hamburger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    background: none; border: none;
+    cursor: pointer; padding: 4px; z-index: 200;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--ink-black);
+    transition: transform 0.3s, opacity 0.3s;
+    transform-origin: center;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed; inset: 0; z-index: 150;
+    background: var(--cream);
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 2.5rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .mobile-menu.open { opacity: 1; pointer-events: all; }
+  .mobile-menu a {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 700;
+    color: var(--ink-black); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--burnt-sienna); }
+  .mobile-menu .mobile-cta {
+    background: var(--burnt-sienna); color: white !important;
+    padding: 0.9rem 2.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem !important; font-weight: 500;
+  }
+  .mobile-menu-logo {
+    position: absolute; top: 1.5rem; left: 1.5rem;
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--burnt-sienna);
+  }
+
+  /* ─── TABLET (max 900px) ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+
+    #hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      padding-top: 70px;
+    }
+    .hero-left { padding: 3rem 2rem 1rem; }
+    .hero-right { padding: 1rem 2rem 3rem; }
+    .hero-bg-circle { width: 80vw; height: 80vw; right: -20%; opacity: 0.35; }
+    .tshirt-svg { width: 240px; }
+    .float-tag:nth-child(1) { left: 0; }
+    .float-tag:nth-child(2) { right: 0; }
+    .float-tag:nth-child(3) { left: 0; }
+    .float-tag:nth-child(4) { right: 0; }
+
+    #how { padding: 5rem 2.5rem; }
+    .steps { grid-template-columns: 1fr; gap: 2rem; }
+
+    #preview {
+      grid-template-columns: 1fr;
+      padding: 5rem 2.5rem;
+      gap: 3rem;
+    }
+
+    .why-grid { grid-template-columns: 1fr; gap: 3rem; }
+    #why { padding: 6rem 2.5rem; }
+    .why-right { grid-template-columns: 1fr 1fr; }
+
+    #cta { padding: 7rem 2.5rem; }
+
+    footer { flex-direction: column; gap: 0.8rem; text-align: center; padding: 2rem; }
+  }
+
+  /* ─── MOBILE (max 600px) ─── */
+  @media (max-width: 600px) {
+    body { cursor: auto; }
+    .cursor, .cursor-trail { display: none; }
+
+    nav {
+      padding: 1rem 1.4rem;
+    }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: flex; }
+
+    #hero {
+      grid-template-columns: 1fr;
+      padding-top: 64px;
+    }
+    .hero-left {
+      padding: 2.5rem 1.4rem 0;
+      text-align: center;
+    }
+    .hero-tag {
+      justify-content: center;
+      font-size: 0.68rem;
+    }
+    .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.2rem); }
+    .hero-brush { font-size: clamp(2rem, 8vw, 2.8rem); }
+    .hero-sub { font-size: 0.95rem; margin: 1rem auto; max-width: 100%; }
+    .hero-actions {
+      flex-direction: column; align-items: center;
+      gap: 1rem; margin-top: 1.8rem;
+    }
+    .btn-primary { width: 100%; text-align: center; padding: 1rem; }
+    .hero-bg-circle { width: 90vw; height: 90vw; right: -30%; opacity: 0.25; }
+
+    .hero-right { padding: 1.5rem 1.4rem 2.5rem; justify-content: center; }
+    .tshirt-showcase { transform-origin: center; }
+    .tshirt-svg { width: 200px; }
+    .float-tag { font-size: 0.85rem !important; padding: 0.3rem 0.6rem; }
+    .float-tag:nth-child(1) { left: -5%; top: 5%; }
+    .float-tag:nth-child(2) { right: -5%; top: 15%; }
+    .float-tag:nth-child(3) { left: -5%; bottom: 28%; }
+    .float-tag:nth-child(4) { right: -5%; bottom: 12%; }
+
+    .scroll-hint { display: none; }
+
+    #how { padding: 4rem 1.4rem; }
+    .section-title { font-size: clamp(1.8rem, 7vw, 2.4rem); }
+    .steps { grid-template-columns: 1fr; gap: 2rem; margin-top: 2.5rem; }
+    .step-number { font-size: 3rem; }
+    .step h3 { font-size: 1.2rem; }
+
+    .brush-divider { font-size: 0.85rem; }
+
+    #memories { padding: 4rem 0; }
+    .memories-header { padding: 0 1.4rem; margin-bottom: 2.5rem; }
+    .photo-card { width: 200px; height: 250px; }
+    .scene-illustration { font-size: 3.5rem; }
+    .scene-name { font-size: 1.4rem; }
+
+    #preview {
+      grid-template-columns: 1fr;
+      padding: 4rem 1.4rem;
+      gap: 2.5rem;
+    }
+    /* On mobile: show tshirt preview FIRST, then form */
+    #preview { display: flex; flex-direction: column; }
+    .preview-right { order: -1; }
+    .live-tshirt-svg { width: 200px; }
+    .live-name-overlay { font-size: 1.6rem !important; }
+    .brush-strokes { width: 140px; }
+    .color-swatch { width: 36px; height: 36px; }
+
+    #why { padding: 4rem 1.4rem; }
+    .why-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .why-right { grid-template-columns: 1fr; gap: 1rem; }
+    .why-card { padding: 1.3rem; }
+    #why::before { font-size: 6rem; opacity: 0.04; }
+
+    #cta { padding: 5rem 1.4rem; }
+    .cta-title { font-size: clamp(2.2rem, 9vw, 3.2rem); }
+    .cta-sub { font-size: 0.95rem; }
+    .btn-big { padding: 1rem 2.5rem; font-size: 0.9rem; width: 100%; }
+
+    footer {
+      flex-direction: column; gap: 0.6rem;
+      text-align: center; padding: 2rem 1.4rem;
+    }
+
+    /* Touch-friendly inputs */
+    .field-group input, .field-group select {
+      font-size: 16px; /* prevents iOS zoom */
+      cursor: auto;
+    }
+    .btn-primary, .btn-big { cursor: auto; }
+    .color-swatch { cursor: auto; }
+  }
+
+  /* Very small screens */
+  @media (max-width: 360px) {
+    .hero-h1 { font-size: 2.1rem; }
+    .float-tag { display: none; }
+    .tshirt-svg { width: 180px; }
+  }
+
 </style>
 </head>
 <body>
@@ -667,7 +854,19 @@
     <li><a href="#preview">Preview</a></li>
     <li><a href="#cta" class="nav-cta">Order Now</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-logo">INK'D</div>
+  <a href="#how" class="mob-link">How it works</a>
+  <a href="#memories" class="mob-link">Gallery</a>
+  <a href="#preview" class="mob-link">Preview</a>
+  <a href="#cta" class="mob-link mobile-cta">Order Now</a>
+</div>
 
 <!-- ─── HERO ─── -->
 <section id="hero">
@@ -1039,6 +1238,24 @@
 </footer>
 
 <script>
+  // ─── HAMBURGER MENU ───
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  document.querySelectorAll('.mob-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
   // ─── CURSOR ───
   const cursor = document.getElementById('cursor');
   const trail = document.getElementById('cursorTrail');
@@ -1107,6 +1324,7 @@
 
   // ─── PARALLAX HERO BG ───
   document.addEventListener('scroll', () => {
+    if (window.innerWidth < 600) return;
     const y = window.scrollY;
     const circle = document.querySelector('.hero-bg-circle');
     if (circle) circle.style.transform = `translateY(calc(-50% + ${y*0.2}px))`;
