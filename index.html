@@ -656,7 +656,8 @@
     display: none;
     flex-direction: column; gap: 5px;
     background: none; border: none;
-    cursor: pointer; padding: 4px; z-index: 200;
+    cursor: pointer; padding: 4px;
+    position: relative; z-index: 300;
   }
   .hamburger span {
     display: block; width: 24px; height: 2px;
@@ -697,6 +698,26 @@
     font-size: 1.8rem; font-weight: 700;
     color: var(--burnt-sienna);
   }
+  .mobile-close {
+    position: absolute; top: 1.2rem; right: 1.4rem;
+    background: none; border: none;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10;
+  }
+  .mobile-close::before,
+  .mobile-close::after {
+    content: '';
+    position: absolute;
+    width: 22px; height: 2px;
+    background: var(--ink-black);
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .mobile-close::before { transform: rotate(45deg); }
+  .mobile-close::after  { transform: rotate(-45deg); }
+  .mobile-close:hover::before,
+  .mobile-close:hover::after { background: var(--burnt-sienna); }
 
   /* ─── TABLET (max 900px) ─── */
   @media (max-width: 900px) {
@@ -862,6 +883,7 @@
 <!-- Mobile Menu Overlay -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-logo">INK'D</div>
+  <button class="mobile-close" id="mobileClose" aria-label="Close menu"></button>
   <a href="#how" class="mob-link">How it works</a>
   <a href="#memories" class="mob-link">Gallery</a>
   <a href="#preview" class="mob-link">Preview</a>
@@ -1241,19 +1263,26 @@
   // ─── HAMBURGER MENU ───
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
+  const mobileClose = document.getElementById('mobileClose');
+
+  function openMenu() {
+    mobileMenu.classList.add('open');
+    hamburger.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    mobileMenu.classList.remove('open');
+    hamburger.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
   hamburger.addEventListener('click', () => {
-    const isOpen = mobileMenu.classList.toggle('open');
-    hamburger.classList.toggle('open', isOpen);
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
   });
+  mobileClose.addEventListener('click', closeMenu);
 
   document.querySelectorAll('.mob-link').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenu.classList.remove('open');
-      hamburger.classList.remove('open');
-      document.body.style.overflow = '';
-    });
+    link.addEventListener('click', closeMenu);
   });
 
   // ─── CURSOR ───
